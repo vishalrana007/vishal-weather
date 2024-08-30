@@ -184,38 +184,13 @@ export default function Home() {
           {showWelcome && (
             <div className="mb-4">
               <h1 className="text-xl lg:text-2xl font-semibold mb-4 text-center bg-gradient-to-r from-blue-400 to-green-400 text-white p-4 rounded-lg shadow-lg transition-all duration-300">
-                Welcome to our weather service provided by Vishal Rana. Please enter the city you'd like to retrieve weather information for, and we'll display the current conditions and forecast for that location.
+                Welcome to our weather service provided by Vishal Rana. Please enter the city you&apos;d like to retrieve weather information for, and we&apos;ll display the current conditions and forecast for that location.
               </h1>
             </div>
           )}
-          <div className="bg-gray-800 shadow-lg rounded-3xl px-8 pt-6 pb-8 text-white transition-all duration-300">
+          <div className="bg-gray-50 p-4 rounded-lg shadow-md text-center w-full">
             {weather}
           </div>
-        </div>
-
-        {/* Right-side search bar */}
-        <div className="w-full max-w-md lg:w-[800px] mt-6 lg:mt-12 lg:ml-8 hidden lg:block">
-          <h1 className="text-3xl lg:text-5xl font-bold mb-4 text-center text-outline" style={{ fontFamily: "Georama" }}>
-            {colorizedText("Weather")}
-          </h1>
-          <div className="flex items-center space-x-2 w-full mb-4">
-            <input
-              className="block w-full bg-gray-200 text-black rounded-full shadow-inner py-2 px-4 transition-all duration-300 focus:outline-gray-300 focus:ring-2 focus:ring-blue-600"
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Location..(e.g., Dharamshala)"
-            />
-            <button
-              onClick={handleSearch}
-              className="h-10 px-4 text-white bg-blue-500 rounded-full hover:bg-blue-700 transition-colors duration-300"
-            >
-              <FaSearch />
-            </button>
-          </div>
-          <p className="text-md lg:text-lg mb-4 font-medium bg-gradient-to-r from-blue-400 to-red-600 to-yellow-400 to-green-400 rounded-lg text-white text-center transition-all duration-300">
-            Enter the name of the city to get the current weather conditions. For more detailed forecasts, try our main search bar.
-          </p>
         </div>
       </div>
     </div>
