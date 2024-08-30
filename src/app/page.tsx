@@ -9,9 +9,10 @@ import { FaLocationDot } from "react-icons/fa6";
 
 const googleColors = ["#4285F4", "#EA4335", "#F7E01A", "#34A853"];
 const cities = [
-  "New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", 
-  "San Antonio", "San Diego", "Dallas", "San Jose", "Delhi", "Mumbai", "Bangalore", 
-  "Dharamshala", "Mexico", "Shahpur", "Chennai", "Jaipur", "Kangra"
+  "New York, USA", "Los Angeles, USA", "Chicago, USA", "Houston, USA", "Phoenix, USA", "Philadelphia, USA",
+  "San Antonio, USA", "San Diego, USA", "Dallas, USA", "San Jose, USA", "New Delhi, India", "Mumbai, India",
+  "Bangalore, India", "Dharamshala, India", "Mexico City, Mexico", "Shahpur, India", "Chennai, India", "Jaipur, India",
+  "Kangra, India"
 ];
 
 const colorizedText = (text: string) => {
@@ -28,7 +29,7 @@ export default function Home() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [background, setBackground] = useState<string>("bg-gray-100");
+  const [backgroundImage, setBackgroundImage] = useState<string>("url('/images/weather/default.jpg')");
 
   useEffect(() => {
     if (location) {
@@ -43,19 +44,21 @@ export default function Home() {
     }
   }, [location]);
 
-  const getBackgroundStyle = (condition: string) => {
+  const getBackgroundImage = (condition: string) => {
     if (condition.toLowerCase().includes("sunny") || condition.toLowerCase().includes("clear")) {
-      return "bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500";
+      return "url('/images/weather/sunny.jpg')";
     } else if (condition.toLowerCase().includes("cloudy") || condition.toLowerCase().includes("overcast")) {
-      return "bg-gradient-to-r from-yellow-400 to-gray-600";
+      return "url('/images/weather/cloudy.jpg')";
     } else if (condition.toLowerCase().includes("rain") || condition.toLowerCase().includes("drizzle")) {
-      return "bg-gradient-to-r from-blue-400 to-blue-600";
+      return "url('/images/weather/rainy.jpg')";
     } else if (condition.toLowerCase().includes("snow")) {
-      return "bg-gradient-to-r from-gray-200 to-whitw-500 to black-500";
+      return "url('/images/weather/snowy.jpg')";
     } else if (condition.toLowerCase().includes("thunderstorm")) {
-      return "bg-gradient-to-r from-gray-600 to-gray-900";
+      return "url('/images/weather/thunderstorm.jpg')";
+    } else if (condition.toLowerCase().includes("mist") || condition.toLowerCase().includes("fog")) {
+      return "url('/images/weather/mist.jpg')";
     } else {
-      return "bg-gray-100";
+      return "url('/images/weather/default.jpg')";
     }
   };
 
@@ -71,6 +74,7 @@ export default function Home() {
         if (data) {
           const api_data = {
             city: data.location.name,
+            country: data.location.country, // Added this line to include the country
             temp: data.current.temp_c,
             humidity: data.current.humidity,
             wind: data.current.wind_mph,
@@ -82,7 +86,9 @@ export default function Home() {
 
           setWeather(
             <>
-              <div className="text-center text-2xl p-2 font-medium">{api_data.city}</div>
+              <div className="text-center text-2xl p-2 font-medium">
+                {api_data.city}, {api_data.country} {/* Display both city and country */}
+              </div>
               <div className="flex justify-center mb-4">
                 <img src={api_data.img} width="80" height="80" alt="condition" />
               </div>
@@ -101,7 +107,7 @@ export default function Home() {
             </>
           );
 
-          setBackground(getBackgroundStyle(api_data.condition));
+          setBackgroundImage(getBackgroundImage(api_data.condition));
           setShowWelcome(false);
         }
       } catch (err) {
@@ -112,6 +118,7 @@ export default function Home() {
 
   const handleSearch = () => {
     getWeather();
+    setShowSuggestions(false); // Hide suggestions after search
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -121,30 +128,33 @@ export default function Home() {
   };
 
   return (
-    <div className={`flex flex-col items-center justify-start min-h-screen py-2 ${background} transition-colors duration-500`}>
+    <div
+      className="flex flex-col items-center justify-start min-h-screen py-2 bg-cover bg-center transition-all duration-500"
+      style={{ backgroundImage }}
+    >
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 flex flex-wrap items-center justify-between py-4 bg-white shadow-md px-6 w-screen z-10">
-        <h1 className="text-4xl font-bold hidden lg:block" style={{ fontFamily: "Georama" }}>
+      <nav className="fixed top-0 left-0 right-0 flex flex-wrap items-center justify-between py-4 bg-white shadow-md px-6 w-full z-10">
+        <h1 className="text-3xl lg:text-4xl font-bold hidden lg:block" style={{ fontFamily: "Georama" }}>
           {colorizedText("Weather")}
         </h1>
         <div className="flex items-center gap-2 hidden lg:flex">
-          <IoIosMail />
-          <span className="hover:text-blue-700 cursor-pointer">vr772107@gmail.com</span>
-          <IoCall />
-          <span className="hover:text-blue-700 cursor-pointer">8219198229</span>
-          <FaLocationDot />
-          <span className="hover:text-blue-700 cursor-pointer">Dharamshala</span>
+          <IoIosMail className="transition-colors duration-300 hover:text-blue-700" />
+          <span className="hover:text-blue-700 cursor-pointer transition-colors duration-300">vr772107@gmail.com</span>
+          <IoCall className="transition-colors duration-300 hover:text-blue-700" />
+          <span className="hover:text-blue-700 cursor-pointer transition-colors duration-300">8219198229</span>
+          <FaLocationDot className="transition-colors duration-300 hover:text-blue-700" />
+          <span className="hover:text-blue-700 cursor-pointer transition-colors duration-300">Dharamshala</span>
         </div>
         {/* Search bar */}
         <div className="relative flex items-center space-x-2 w-full max-w-md">
           <input
-            className="block w-full bg-gray-200 text-black rounded-full shadow-inner py-2 px-4 focus:outline-gray-300 focus:ring-2 focus:ring-blue-600"
+            className="block w-full bg-gray-200 text-black rounded-full shadow-inner py-2 px-4 transition-all duration-300 focus:outline-gray-300 focus:ring-2 focus:ring-blue-600"
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             onFocus={() => setShowSuggestions(suggestions.length > 0)}
-            onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
-            placeholder="Location..(e.g., New York)"
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // Delay to prevent immediate hiding
+            placeholder="Location..(e.g., Dharamshala)"
           />
           <button
             onClick={handleSearch}
@@ -153,11 +163,11 @@ export default function Home() {
             <FaSearch />
           </button>
           {showSuggestions && suggestions.length > 0 && (
-            <div className="absolute top-full mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+            <div className="absolute top-full mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10 transition-all duration-300">
               {suggestions.map((suggestion, index) => (
                 <div
                   key={index}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer transition-colors duration-300"
                   onClick={() => handleSuggestionClick(suggestion)}
                 >
                   {suggestion}
@@ -169,34 +179,32 @@ export default function Home() {
       </nav>
 
       {/* Main content */}
-      <div className="flex flex-col lg:flex-row items-start justify-start w-full px-6 mt-52 gap-2 max-w-3xl">
+      <div className="flex flex-col lg:flex-row items-center lg:items-start justify-start w-full px-6 mt-24 lg:mt-52 gap-4 lg:gap-6 max-w-3xl">
         <div className="w-full max-w-md mb-6 lg:mb-0">
           {showWelcome && (
             <div className="mb-4">
-              <h1 className="text-2xl font-semibold mb-4 text-center bg-gradient-to-r from-blue-400 to-green-400 text-white p-4 rounded-lg shadow-lg">
+              <h1 className="text-xl lg:text-2xl font-semibold mb-4 text-center bg-gradient-to-r from-blue-400 to-green-400 text-white p-4 rounded-lg shadow-lg transition-all duration-300">
                 Welcome to our weather service provided by Vishal Rana. Please enter the city you'd like to retrieve weather information for, and we'll display the current conditions and forecast for that location.
               </h1>
             </div>
           )}
-          <div className="bg-gray-800 shadow-lg rounded-3xl px-8 pt-6 pb-8 text-white">
+          <div className="bg-gray-800 shadow-lg rounded-3xl px-8 pt-6 pb-8 text-white transition-all duration-300">
             {weather}
           </div>
         </div>
 
         {/* Right-side search bar */}
         <div className="w-full max-w-md lg:w-[800px] mt-6 lg:mt-12 lg:ml-8 hidden lg:block">
-          <h1 className="text-4xl lg:text-7xl font-bold mb-4 text-center" style={{ fontFamily: "Georama" }}>
+          <h1 className="text-3xl lg:text-5xl font-bold mb-4 text-center text-outline" style={{ fontFamily: "Georama" }}>
             {colorizedText("Weather")}
           </h1>
-          <div className="flex items-center space-x-2 w-full"></div>
-
           <div className="flex items-center space-x-2 w-full mb-4">
             <input
-              className="block w-full bg-gray-200 text-black rounded-full shadow-inner py-2 px-4 focus:outline-gray-300 focus:ring-2 focus:ring-blue-600"
+              className="block w-full bg-gray-200 text-black rounded-full shadow-inner py-2 px-4 transition-all duration-300 focus:outline-gray-300 focus:ring-2 focus:ring-blue-600"
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="Location..(e.g., New York)"
+              placeholder="Location..(e.g., Dharamshala)"
             />
             <button
               onClick={handleSearch}
@@ -205,7 +213,7 @@ export default function Home() {
               <FaSearch />
             </button>
           </div>
-          <p className="text-lg mb-4 font-medium text-gray-700 text-center">
+          <p className="text-md lg:text-lg mb-4 font-medium bg-gradient-to-r from-blue-400 to-red-600 to-yellow-400 to-green-400 rounded-lg text-white text-center transition-all duration-300">
             Enter the name of the city to get the current weather conditions. For more detailed forecasts, try our main search bar.
           </p>
         </div>
